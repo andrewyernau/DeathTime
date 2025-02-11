@@ -1,4 +1,4 @@
 package net.ezplace.deathTime.data;
 
-public class Caffeine {
+public class DatabaseManager {
 }

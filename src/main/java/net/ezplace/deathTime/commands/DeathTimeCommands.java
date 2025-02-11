@@ -1,9 +1,9 @@
 package net.ezplace.deathTime.commands;
 
 
-import net.ezplace.deathTime.handlers.ItemHandler;
-import net.ezplace.deathTime.utils.DeathTimeMessages;
-import net.ezplace.deathTime.utils.DeathTimeSettings;
+import net.ezplace.deathTime.core.ItemManager;
+import net.ezplace.deathTime.config.MessagesManager;
+import net.ezplace.deathTime.config.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +12,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,9 +19,9 @@ import java.util.List;
 public class DeathTimeCommands implements CommandExecutor, TabCompleter {
 
 
-    private final ItemHandler itemHandler;
+    private final ItemManager itemHandler;
 
-    public DeathTimeCommands(ItemHandler itemHandler) {
+    public DeathTimeCommands(ItemManager itemHandler) {
         this.itemHandler = itemHandler;
     }
 
@@ -49,7 +48,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
             case "item":
                 if (args.length == 3 && args[1].equalsIgnoreCase("get")) {
                     if (!(sender instanceof Player)) {
-                        sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.console.error.item"));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.console.error.item"));
                         return true;
                     }
                     Player player = (Player) sender;
@@ -57,7 +56,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                         int a = Integer.parseInt(args[2]);
                         handleItemGetCommand(player, a);
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notint"));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notint"));
                     }
                     return true;
                 }
@@ -65,32 +64,32 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                 if (args.length == 4 && args[1].equalsIgnoreCase("player")) {
                     Player target = Bukkit.getPlayer(args[2]);
                     if (target == null) {
-                        sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notonline"));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notonline"));
                         return true;
                     }
                     try {
                         int value = Integer.parseInt(args[3]);
                         handleItemGetCommand(target, value);
                     } catch (NumberFormatException e) {
-                        sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notint"));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notint"));
                     }
                     return true;
                 }
 
-                sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.give.usage"));
-                sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.give.usage1"));
-                sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.give.usage2"));
+                sender.sendMessage(MessagesManager.getInstance().getMessage("command.give.usage"));
+                sender.sendMessage(MessagesManager.getInstance().getMessage("command.give.usage1"));
+                sender.sendMessage(MessagesManager.getInstance().getMessage("command.give.usage2"));
                 return true;
 
             case "reload":
-                DeathTimeSettings.getInstance().load();
-                sender.sendMessage(DeathTimeMessages.getInstance().getMessage("plugin.reload"));
+                SettingsManager.getInstance().load();
+                sender.sendMessage(MessagesManager.getInstance().getMessage("plugin.reload"));
                 return true;
             case "set":
                     if(args.length == 2){
                         Player target = Bukkit.getPlayer(args[0]);
                         if (target == null) {
-                            sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notonline"));
+                            sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notonline"));
                             return true;
                         }
                         try {
@@ -99,7 +98,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                              * IMPLEMENT CHANGE PLAYER TIMER VALUE
                              * */
                         } catch (NumberFormatException e) {
-                            sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notint"));
+                            sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notint"));
                         }
                         return true;
                     }
@@ -108,7 +107,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                 if (args.length == 2) {
                     Player target = Bukkit.getPlayer(args[1]);
                     if (target == null) {
-                        sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.notonline"));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notonline"));
                         return true;
                     }
                     /**
@@ -119,7 +118,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                 }
                 return true;
             default:
-                sender.sendMessage(DeathTimeMessages.getInstance().getMessage("command.notfound"));
+                sender.sendMessage(MessagesManager.getInstance().getMessage("command.notfound"));
                 return true;
         }
     }
@@ -149,12 +148,12 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
     }
 
     private void sendHelpMessage(CommandSender player) {
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.title"));
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.help"));
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.create"));
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.load"));
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.itemget"));
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.help.itemplayer"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.title"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.help"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.create"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.load"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.itemget"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.itemplayer"));
     }
 
 
@@ -163,7 +162,7 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
 
         ItemStack timeItem = itemHandler.createItem(vaule);
         player.getInventory().addItem(timeItem);
-        player.sendMessage(DeathTimeMessages.getInstance().getMessage("command.item.get"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.item.get"));
 
     }
 }

@@ -1,4 +1,4 @@
-package net.ezplace.deathTime.utils;
+package net.ezplace.deathTime.config;
 
 import net.ezplace.deathTime.DeathTime;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -6,14 +6,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeathTimeMessages {
-    private static DeathTimeMessages instance = new DeathTimeMessages();
+public class MessagesManager {
+    private static MessagesManager instance = new MessagesManager();
     private YamlConfiguration messages;
     private Map<String, String> messageCache = new HashMap<>();
 
-    private DeathTimeMessages() {}
+    private MessagesManager() {}
 
-    public static DeathTimeMessages getInstance() {
+    public static MessagesManager getInstance() {
         return instance;
     }
 
@@ -24,10 +24,10 @@ public class DeathTimeMessages {
             langFolder.mkdirs();
         }
 
-        File file = new File(langFolder, DeathTimeSettings.LANGUAGE + ".yml");
+        File file = new File(langFolder, SettingsManager.LANGUAGE + ".yml");
 
         if (!file.exists()) {
-            DeathTime.getInstance().saveResource("lang/" + DeathTimeSettings.LANGUAGE + ".yml", false);
+            DeathTime.getInstance().saveResource("lang/" + SettingsManager.LANGUAGE + ".yml", false);
         }
 
         messages = YamlConfiguration.loadConfiguration(file);

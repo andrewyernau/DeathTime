@@ -1,14 +1,13 @@
-package net.ezplace.deathTime.utils;
+package net.ezplace.deathTime.config;
 
 import net.ezplace.deathTime.DeathTime;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-public class DeathTimeSettings {
-    private final static DeathTimeSettings instance = new DeathTimeSettings();
+public class SettingsManager {
+    private final static SettingsManager instance = new SettingsManager();
 
     private File file;
     private YamlConfiguration config;
@@ -22,10 +21,10 @@ public class DeathTimeSettings {
     public static String ITEM_NAME;
     public static String ITEM_LORE;
 
-    private DeathTimeSettings(){
+    private SettingsManager(){
 
     }
-    public static DeathTimeSettings getInstance() {
+    public static SettingsManager getInstance() {
         return instance;
     }
 
