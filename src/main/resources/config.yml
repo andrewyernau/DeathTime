@@ -1,0 +1,22 @@
+#
+Lang: en
+Defaults:
+  Initial-time: 86400 # 60 seconds * 60 minutes * 24 hours
+  Ban-duration: 86400
+  Item:
+    Material: DRAGON_BREATH
+    Name: "&5Breath of the time"
+    Lore:
+      - "&7Adds {seconds} seconds of life"
+    Glow-effect: true
+
+Rewards:
+  Entities:
+    PLAYER: 300
+    ENDER_DRAGON: 1800
+    WARDEN: 1200
+
+Messages:
+  Time-left: "&eTime left: &6{timeleft}"
+  Time-alive: "&eTime alive: &6{timelive}"
+  Banned: "&cYou died! Reviving in &4{time} &cseconds"
