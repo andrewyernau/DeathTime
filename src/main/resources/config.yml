@@ -16,6 +16,15 @@ Rewards:
     ENDER_DRAGON: 1800
     WARDEN: 1200
 
+Database:
+  type: "h2" # Options: h2 (local), mysql, sqlite, postgresql
+  host: "localhost"
+  port: 3306
+  database_name: "deathtimer"
+  username: "root"
+  password: "password"
+  poolsize: 10
+  connectionTimeOut: 3000
 Messages:
   Time-left: "&eTime left: &6{timeleft}"
   Time-alive: "&eTime alive: &6{timelive}"

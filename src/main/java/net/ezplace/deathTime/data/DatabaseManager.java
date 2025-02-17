@@ -2,6 +2,7 @@ package net.ezplace.deathTime.data;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.ezplace.deathTime.config.SettingsManager;
 
 import java.io.File;
 import java.sql.Connection;
@@ -15,9 +16,30 @@ public class DatabaseManager {
 
     public DatabaseManager(File dataFolder) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:sqlite:" + dataFolder.getAbsolutePath() + "/data.db");
-        config.setMaximumPoolSize(10);
-        config.setConnectionTimeout(3000);
+
+        switch (SettingsManager.DATABASE_TYPE.toLowerCase()) {
+            case "h2":
+                config.setJdbcUrl("jdbc:h2:" + dataFolder.getAbsolutePath() + "/" + SettingsManager.DATABASE_NAME);
+                break;
+            case "sqlite":
+                config.setJdbcUrl("jdbc:sqlite:" + dataFolder.getAbsolutePath() + "/" + SettingsManager.DATABASE_NAME + ".db");
+                break;
+            case "mysql":
+                config.setJdbcUrl("jdbc:mysql://" + SettingsManager.DATABASE_HOST + ":" + SettingsManager.DATABASE_PORT + "/" + SettingsManager.DATABASE_NAME);
+                config.setUsername(SettingsManager.DATABASE_USERNAME);
+                config.setPassword(SettingsManager.DATABASE_PASSWORD);
+                break;
+            case "postgresql":
+                config.setJdbcUrl("jdbc:postgresql://" + SettingsManager.DATABASE_HOST + ":" + SettingsManager.DATABASE_PORT + "/" + SettingsManager.DATABASE_NAME);
+                config.setUsername(SettingsManager.DATABASE_USERNAME);
+                config.setPassword(SettingsManager.DATABASE_PASSWORD);
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de base de datos no soportado: " + SettingsManager.DATABASE_TYPE);
+        }
+
+        config.setMaximumPoolSize(SettingsManager.DATABASE_POOLSIZE);
+        config.setConnectionTimeout(SettingsManager.DATABASE_CONNTIMEOUT);
         dataSource = new HikariDataSource(config);
 
         createTables();

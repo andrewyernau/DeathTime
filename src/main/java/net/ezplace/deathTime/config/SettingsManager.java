@@ -14,6 +14,16 @@ public class SettingsManager {
 
     public static String LANGUAGE;
 
+    public static String DATABASE_TYPE;
+    public static String DATABASE_HOST;
+    public static int DATABASE_PORT;
+    public static String DATABASE_NAME;
+    public static String DATABASE_USERNAME;
+    public static String DATABASE_PASSWORD;
+
+    public static int DATABASE_POOLSIZE;
+    public static int DATABASE_CONNTIMEOUT;
+
     public static int INITIAL_TIME;
     public static int BAN_DURATION;
 
@@ -46,6 +56,17 @@ public class SettingsManager {
         }
 
         LANGUAGE = String.valueOf(config.getString("Lang"));
+
+        DATABASE_TYPE = config.getString("Database.type", "h2");
+        DATABASE_HOST = config.getString("Database.host", "localhost");
+        DATABASE_PORT = config.getInt("Database.port", 3306);
+        DATABASE_NAME = config.getString("Database.database_name", "deathtimer");
+        DATABASE_USERNAME = config.getString("Database.username", "root");
+        DATABASE_PASSWORD = config.getString("Database.password", "password");
+
+        DATABASE_POOLSIZE = config.getInt("Database.port", 3306);
+        DATABASE_CONNTIMEOUT = config.getInt("Database.port", 3306);
+
 
         ITEM_MATERIAL = Material.valueOf(config.getString("Defaults.Item.Material"));
         ITEM_NAME = String.valueOf(config.getString("Defaults.Item.Name"));

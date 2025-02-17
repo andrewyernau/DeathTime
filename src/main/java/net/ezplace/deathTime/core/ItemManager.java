@@ -7,6 +7,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Arrays;
+
 public class ItemManager {
     private final NamespacedKey key;
 
@@ -23,9 +25,27 @@ public class ItemManager {
         }
 
         meta.setDisplayName(SettingsManager.ITEM_NAME);
-        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, Integer.toString(itemValue));
+        meta.setLore(Arrays.asList(
+                "§7Añade §a" + itemValue + " segundos §7de vida.",
+                "§8Usa este ítem para sobrevivir."
+        ));
+
+        meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, itemValue);
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    public int getItemValue(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return 0;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || !meta.getPersistentDataContainer().has(key, PersistentDataType.INTEGER)) {
+            return 0;
+        }
+
+        return meta.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
     }
 }
