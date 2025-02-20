@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class PlayerListener implements Listener {
     private final CacheManager cacheManager;
     private final BatchProcessor batchProcessor;
@@ -31,14 +33,13 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
+        long currentTime = cacheManager.getPlayerTime(uuid);
 
-        // Cargar tiempo desde caché/DB
-        long time = cacheManager.getPlayerTime(uuid);
-
-        // Si es nuevo jugador, usar valor por defecto
-        if (time == -1) {
-            time = SettingsManager.INITIAL_TIME;
-            batchProcessor.addToBatch(uuid, time);
+        // Load through cache/DB
+        cacheManager.getPlayerTime(uuid);
+        if (currentTime <= 0) {
+            cacheManager.updatePlayerTime(uuid, SettingsManager.INITIAL_TIME);
+            getLogger().info("Contador de " + player.getName() + " restablecido a " + SettingsManager.INITIAL_TIME + " segundos.");
         }
     }
 
@@ -46,7 +47,7 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
 
-        // Forzar guardado inmediato
+        // Force save
         batchProcessor.flushSingle(uuid);
         cacheManager.invalidatePlayer(uuid);
     }
@@ -63,8 +64,6 @@ public class PlayerListener implements Listener {
             UUID uuid = player.getUniqueId();
             long currentTime = cacheManager.getPlayerTime(uuid);
             cacheManager.updatePlayerTime(uuid, currentTime + timeToAdd);
-
-            // Eliminar el ítem consumido
             item.setAmount(item.getAmount() - 1);
             player.sendMessage(MessagesManager.getInstance().getMessage("item.consume", Map.of("time", String.valueOf(timeToAdd))));
         }

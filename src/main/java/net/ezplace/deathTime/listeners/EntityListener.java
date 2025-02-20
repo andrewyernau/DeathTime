@@ -21,14 +21,12 @@ public class EntityListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (event.getEntity() instanceof Player) {
-            // Jugador muerto
             Player player = (Player) event.getEntity();
-            int timeToAdd = random.nextInt(60) + 30; // Entre 30 y 90 segundos
+            int timeToAdd = random.nextInt(60) + 30;
             ItemStack timeItem = itemManager.createItem(timeToAdd);
             player.getWorld().dropItemNaturally(player.getLocation(), timeItem);
         } else if (event.getEntityType() == EntityType.ENDER_DRAGON || event.getEntityType() == EntityType.WITHER) {
-            // Boss muerto
-            int timeToAdd = random.nextInt(120) + 60; // Entre 60 y 180 segundos
+            int timeToAdd = random.nextInt(120) + 60;
             ItemStack timeItem = itemManager.createItem(timeToAdd);
             event.getDrops().add(timeItem);
         }

@@ -115,7 +115,8 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     long time = cacheManager.getPlayerTime(target.getUniqueId());
-                    sender.sendMessage(MessagesManager.getInstance().getMessage("command.check.time", Map.of("time", String.valueOf(time))));
+                    sender.sendMessage("Le quedan "+ time + "segundos");
+                    //sender.sendMessage(MessagesManager.getInstance().getMessage("command.check.time", Map.of("time", String.valueOf(time))));
                     return true;
                 }
                 return true;

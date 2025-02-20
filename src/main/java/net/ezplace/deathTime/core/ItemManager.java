@@ -26,6 +26,7 @@ public class ItemManager {
 
         meta.setDisplayName(SettingsManager.ITEM_NAME);
         meta.setLore(Arrays.asList(
+                SettingsManager.ITEM_LORE,
                 "§7Añade §a" + itemValue + " segundos §7de vida.",
                 "§8Usa este ítem para sobrevivir."
         ));

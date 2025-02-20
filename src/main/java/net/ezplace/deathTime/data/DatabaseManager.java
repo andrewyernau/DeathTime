@@ -74,11 +74,9 @@ public class DatabaseManager {
     public void updatePlayerTime(UUID uuid, long time) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO players(uuid, timer) VALUES(?, ?) " +
-                             "ON CONFLICT(uuid) DO UPDATE SET timer = ?")) {
+                     "MERGE INTO players(uuid, timer) KEY(uuid) VALUES(?, ?)")) {
             stmt.setString(1, uuid.toString());
             stmt.setLong(2, time);
-            stmt.setLong(3, time);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -24,8 +24,8 @@ public class SettingsManager {
     public static int DATABASE_POOLSIZE;
     public static int DATABASE_CONNTIMEOUT;
 
-    public static int INITIAL_TIME;
-    public static int BAN_DURATION;
+    public static Long INITIAL_TIME;
+    public static Long BAN_DURATION;
 
     public static Material ITEM_MATERIAL;
     public static String ITEM_NAME;
@@ -68,6 +68,8 @@ public class SettingsManager {
         DATABASE_CONNTIMEOUT = config.getInt("Database.port", 3306);
 
 
+        INITIAL_TIME = config.getLong("Defaults.Initial-time", 11340);
+        BAN_DURATION = config.getLong("Defaults.Ban-duration",11340);
         ITEM_MATERIAL = Material.valueOf(config.getString("Defaults.Item.Material"));
         ITEM_NAME = String.valueOf(config.getString("Defaults.Item.Name"));
         ITEM_LORE = String.valueOf(config.getString("Defaults.Item.Lore"));
