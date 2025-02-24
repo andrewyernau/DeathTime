@@ -4,9 +4,11 @@ import net.ezplace.deathTime.commands.DeathTimeCommands;
 import net.ezplace.deathTime.core.ItemManager;
 import net.ezplace.deathTime.config.MessagesManager;
 import net.ezplace.deathTime.config.SettingsManager;
+import net.ezplace.deathTime.core.PlayerManager;
 import net.ezplace.deathTime.data.BatchProcessor;
 import net.ezplace.deathTime.data.CacheManager;
 import net.ezplace.deathTime.data.DatabaseManager;
+import net.ezplace.deathTime.listeners.EntityListener;
 import net.ezplace.deathTime.listeners.PlayerListener;
 import net.ezplace.deathTime.tasks.BanTask;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +22,8 @@ public final class DeathTime extends JavaPlugin {
 
     private static DeathTime instance;
     private ItemManager itemHandler;
+
+    private PlayerManager playerManager;
 
     @Override
     public void onEnable() {
@@ -43,6 +47,7 @@ public final class DeathTime extends JavaPlugin {
         MessagesManager.getInstance().loadMessages();
 
         try {
+            this.playerManager = new PlayerManager();
             this.databaseManager = new DatabaseManager(getDataFolder());
             this.cacheManager = new CacheManager(databaseManager, this);
             this.batchProcessor = new BatchProcessor(databaseManager, this);
@@ -54,6 +59,7 @@ public final class DeathTime extends JavaPlugin {
             getCommand("deathtime").setTabCompleter(commandExecutor);
 
             getServer().getPluginManager().registerEvents(new PlayerListener(cacheManager, batchProcessor, itemHandler), this);
+            getServer().getPluginManager().registerEvents(new EntityListener(itemHandler,playerManager),this);
 
             getLogger().info(MessagesManager.getInstance().getMessage("plugin.enabled"));
 
@@ -71,9 +77,8 @@ public final class DeathTime extends JavaPlugin {
             // Timers
             cacheManager.decrementAllTimers();
 
-            // async batch processor
+            // Async batch processor
             getServer().getScheduler().runTaskAsynchronously(this, batchProcessor::flushBatch);
-            getLogger().severe("Flushing batches. DEBUG!");
         }, 0L, 20L);
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {

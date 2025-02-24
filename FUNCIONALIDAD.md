@@ -2,13 +2,13 @@
 
 ##  Requisitos Principales
 ### **Funcionales**
-- [ ] Sistema de contador decreciente por jugador
+- [X] Sistema de contador decreciente por jugador
     - Inicia en X segundos (configurable)
     - Decrementa en 1 cada segundo
-- [ ] Item especial que añade tiempo (Y segundos)
+- [X] Item especial que añade tiempo (Y segundos)
     - Metadata personalizada (NBT) para que su obtención sea exclusiva
     - Dropeo por matar jugadores o bosses (configurable)
-- [ ] Sistema de ban automático al llegar a 0
+- [X] Sistema de ban automático al llegar a 0
     - Tiempo de ban configurable
     - Bypass para admins (p.e. permiso `deathtimer.bypass`)
 - [ ] Comandos administrativos:
@@ -19,10 +19,10 @@
 - [ ] Placeholders para que los usuarios sean capaces de ver sus estadísticas (p.e. %player_remaining_time%)
 
 ### **No Funcionales**
-- [ ] Alta performance (≥50 jugadores concurrentes)
-  - Evitar saturar la bbdd con muchas peticiones de cambios pequeños
-- [ ] Persistencia de datos ante reinicios
-- [ ] Compatibilidad 1.20.4+ (Paper/Spigot)
+- [X] Alta performance (≥50 jugadores concurrentes)
+  -  Evitar saturar la bbdd con muchas peticiones de cambios pequeños
+- [X] Persistencia de datos ante reinicios
+- [X] Compatibilidad 1.20.4+ (Paper/Spigot)
 
 ## Implementación
 
@@ -72,24 +72,25 @@ messages:
 ### 3. Checklist de Desarrollo
 
 #### 1. Core Features
-- [ ] Timer decreciente base
-- [ ] Sistema de items con NBT
-- [ ] Eventos de muerte de entidades
-- [ ] Sistema de ban automático
+- [X] Timer decreciente base
+- [X] Sistema de items con NBT
+- [X] Eventos de muerte de entidades
+- [X] Sistema de ban automático
 ### 2. Datos
-- [ ] Conexión SQLite con HikariCP
-- [ ] Caché en memoria (Caffeine)
-- [ ] Sync memoria-DB cada 5s
+- [X] Conexión SQLite con HikariCP
+- [X] Caché en memoria (Caffeine)
+- [X] Sync memoria-DB cada 5s
 ### 3. Optimización
-- [ ] Batch updates asíncronos
-- [ ] Uso de AtomicLong
-- [ ] Pool de conexiones DB
+- [X] Batch updates asíncronos
+- [X] Uso de AtomicLong
+- [X] Pool de conexiones DB
 ### 4. Comandos 
-- [ ] /deathtimer set
-- [ ] /deathtimer reload
-- [ ] /deathtimer check
+- [X] /deathtime set
+- [X] /deathtime reload
+- [X] /deathtime check
+- [X] /deathtime give
 ### 5. Eventos
-- [ ] PlayerJoinEvent (iniciar timer)
-- [ ] PlayerQuitEvent (guardar datos)
-- [ ] EntityDeathEvent (dropeo item)
-- [ ] PlayerInteractEvent (usar item)
+- [X] PlayerJoinEvent (iniciar timer)
+- [X] PlayerQuitEvent (guardar datos)
+- [X] EntityDeathEvent (dropeo item)
+- [X] PlayerInteractEvent (usar item)

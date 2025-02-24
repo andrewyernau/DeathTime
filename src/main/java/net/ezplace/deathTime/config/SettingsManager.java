@@ -31,6 +31,8 @@ public class SettingsManager {
     public static String ITEM_NAME;
     public static String ITEM_LORE;
 
+    public static int KILL_COOLDOWN;
+
     private SettingsManager(){
 
     }
@@ -73,6 +75,8 @@ public class SettingsManager {
         ITEM_MATERIAL = Material.valueOf(config.getString("Defaults.Item.Material"));
         ITEM_NAME = String.valueOf(config.getString("Defaults.Item.Name"));
         ITEM_LORE = String.valueOf(config.getString("Defaults.Item.Lore"));
+
+        KILL_COOLDOWN = config.getInt("Defaults.Kill-cooldown", 300);
 
     }
 
