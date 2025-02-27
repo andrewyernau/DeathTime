@@ -1,7 +1,9 @@
 package net.ezplace.deathTime.listeners;
 
+import net.ezplace.deathTime.config.SettingsManager;
 import net.ezplace.deathTime.core.ItemManager;
 import net.ezplace.deathTime.core.PlayerManager;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,9 +25,11 @@ public class EntityListener implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
+        //Player drops
         if (event.getEntity() instanceof Player) {
             Player victim = (Player) event.getEntity();
             Player killer = victim.getKiller();
+            //Prevent abuse
             if (killer != null && killer != victim) {
                 if (playerManager.canDropItem(killer.getUniqueId(), victim.getUniqueId())) {
                     int timeToAdd = random.nextInt(60) + 30;
@@ -34,10 +38,17 @@ public class EntityListener implements Listener {
                     playerManager.updateCooldown(killer.getUniqueId(), victim.getUniqueId());
                 }
             }
-        } else if (event.getEntityType() == EntityType.ENDER_DRAGON || event.getEntityType() == EntityType.WITHER) {
-            int timeToAdd = random.nextInt(120) + 60;
+        } //Entity drops
+        else {
+            Entity entity = event.getEntity();
+            String entityType = entity.getType().toString();
+            int timeToAdd = SettingsManager.REWARDS.getOrDefault(entityType, 0);
+
+            if (timeToAdd <= 0) return;
+
             ItemStack timeItem = itemManager.createItem(timeToAdd);
-            event.getDrops().add(timeItem);
+            entity.getWorld().dropItemNaturally(entity.getLocation(), timeItem);
+
         }
     }
 }

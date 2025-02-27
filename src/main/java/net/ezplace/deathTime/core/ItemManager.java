@@ -1,5 +1,6 @@
 package net.ezplace.deathTime.core;
 
+import net.ezplace.deathTime.config.MessagesManager;
 import net.ezplace.deathTime.config.SettingsManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -7,7 +8,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ItemManager {
     private final NamespacedKey key;
@@ -25,11 +27,8 @@ public class ItemManager {
         }
 
         meta.setDisplayName(SettingsManager.ITEM_NAME);
-        meta.setLore(Arrays.asList(
-                SettingsManager.ITEM_LORE,
-                "§7Añade §a" + itemValue + " segundos §7de vida.",
-                "§8Usa este ítem para sobrevivir."
-        ));
+        List<String> lore = MessagesManager.getInstance().getMessageList("item.lore", Map.of("time", String.valueOf(itemValue)));
+        meta.setLore(lore);
 
         meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, itemValue);
         item.setItemMeta(meta);

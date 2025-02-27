@@ -1,10 +1,12 @@
 package net.ezplace.deathTime.listeners;
 
+import net.ezplace.deathTime.DeathTime;
 import net.ezplace.deathTime.config.MessagesManager;
 import net.ezplace.deathTime.config.SettingsManager;
 import net.ezplace.deathTime.core.ItemManager;
 import net.ezplace.deathTime.data.BatchProcessor;
 import net.ezplace.deathTime.data.CacheManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +34,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
         UUID uuid = player.getUniqueId();
         long currentTime = cacheManager.getPlayerTime(uuid);
 
@@ -39,7 +42,6 @@ public class PlayerListener implements Listener {
         cacheManager.getPlayerTime(uuid);
         if (currentTime <= 0) {
             cacheManager.updatePlayerTime(uuid, SettingsManager.INITIAL_TIME);
-            getLogger().info("Contador de " + player.getName() + " restablecido a " + SettingsManager.INITIAL_TIME + " segundos.");
         }
     }
 

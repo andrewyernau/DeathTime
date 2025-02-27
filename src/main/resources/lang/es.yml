@@ -37,3 +37,12 @@ command:
     success: "§aSe le ha reanudado correctamente el temporizador a {user}"
     received: "§aTic tac, el tiempo vuelve a correr"
   notfound: "§cComando no reconocido, por favor usa /dt help para más información"
+ban:
+  message: "§cHas muerto. Revivirás en 1 semana!"
+  outoftime: "§cTe has quedado sin tiempo"
+  broadcast: "§cEl jugador {user} ha sido eliminado!"
+item:
+  consume: "§cHas consumido una poción del tiempo, has obtenido {time} segundos de vida."
+  lore:
+    - "§7Este ítem añade §a{time} segundos §7de vida."
+    - "§8Usa este ítem para sobrevivir."

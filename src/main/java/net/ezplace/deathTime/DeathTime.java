@@ -10,7 +10,9 @@ import net.ezplace.deathTime.data.CacheManager;
 import net.ezplace.deathTime.data.DatabaseManager;
 import net.ezplace.deathTime.listeners.EntityListener;
 import net.ezplace.deathTime.listeners.PlayerListener;
+import net.ezplace.deathTime.other.DeathTimePlaceholders;
 import net.ezplace.deathTime.tasks.BanTask;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DeathTime extends JavaPlugin {
@@ -30,7 +32,7 @@ public final class DeathTime extends JavaPlugin {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            getLogger().severe("No se pudo cargar el controlador H2: " + e.getMessage());
+            getLogger().severe(MessagesManager.getInstance().getMessage("plugin.classnotfound.h2") + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -51,7 +53,7 @@ public final class DeathTime extends JavaPlugin {
             this.databaseManager = new DatabaseManager(getDataFolder());
             this.cacheManager = new CacheManager(databaseManager, this);
             this.batchProcessor = new BatchProcessor(databaseManager, this);
-            this.banTask = new BanTask(this,cacheManager);
+            this.banTask = new BanTask(this,cacheManager,databaseManager);
 
 
             DeathTimeCommands commandExecutor = new DeathTimeCommands(itemHandler, cacheManager);
@@ -65,10 +67,15 @@ public final class DeathTime extends JavaPlugin {
 
             startScheduledTasks();
         } catch (Exception e) {
-            getLogger().severe("Error al inicializar el plugin: " + e.getMessage());
+            getLogger().severe(MessagesManager.getInstance().getMessage("plugin.disable") + e.getMessage());
             e.printStackTrace();
 
             getServer().getPluginManager().disablePlugin(this);
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new DeathTimePlaceholders(this).register();
+            getLogger().info(MessagesManager.getInstance().getMessage("plugin.enable.papi"));
         }
     }
 
@@ -94,5 +101,8 @@ public final class DeathTime extends JavaPlugin {
 
     public static DeathTime getInstance() {
         return instance;
+    }
+    public CacheManager getCacheManager(){
+        return cacheManager;
     }
 }

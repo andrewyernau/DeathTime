@@ -11,12 +11,12 @@
 - [X] Sistema de ban automático al llegar a 0
     - Tiempo de ban configurable
     - Bypass para admins (p.e. permiso `deathtimer.bypass`)
-- [ ] Comandos administrativos:
+- [X] Comandos administrativos:
     - `/deathtime set <segundos>` - Establece tiempo base
     - `/deathtime reload` - Recarga configuración
     - `/deathtime check <jugador>` - Ver tiempo restante
     - `/deathtime bypass <jugador>` - Permite que un jugador no tenga contador
-- [ ] Placeholders para que los usuarios sean capaces de ver sus estadísticas (p.e. %player_remaining_time%)
+- [X] Placeholders para que los usuarios sean capaces de ver sus estadísticas (p.e. %player_remaining_time%)
 
 ### **No Funcionales**
 - [X] Alta performance (≥50 jugadores concurrentes)

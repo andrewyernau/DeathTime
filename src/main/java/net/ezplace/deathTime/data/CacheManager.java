@@ -7,9 +7,14 @@ import net.ezplace.deathTime.DeathTime;
 import net.ezplace.deathTime.config.SettingsManager;
 import net.ezplace.deathTime.tasks.BanTask;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -22,12 +27,13 @@ public class CacheManager {
     private final BanTask banTask;
     private final BatchProcessor batchProcessor;
     private final CacheManager cacheManager;
+    private final Set<UUID> bypassedPlayers = ConcurrentHashMap.newKeySet();
 
     public CacheManager(DatabaseManager db, DeathTime plugin) {
         this.db = db;
         this.plugin = plugin;
         cacheManager = this;
-        this.banTask = new BanTask(plugin,cacheManager);
+        this.banTask = new BanTask(plugin,cacheManager,db);
         this.batchProcessor = new BatchProcessor(db, plugin);
 
         this.timersCache = Caffeine.newBuilder()
@@ -41,22 +47,25 @@ public class CacheManager {
     }
 
     public void decrementAllTimers() {
-        timersCache.asMap().forEach((uuid, time) -> {
+
+        for (Map.Entry<UUID, Long> entry : timersCache.asMap().entrySet()) {
+            UUID uuid = entry.getKey();
+            if (hasBypass(uuid)) {
+                continue;
+            }
+
+            long time = entry.getValue();
+
             if (time > 0) {
                 long newTime = time - 1;
-                getLogger().info("Se ha decrementado el contador en 1 de " + uuid);
-                getLogger().info("Tiempo restante de " + uuid + ": " + newTime);
-
-                if (newTime <= 0) {
-                    getLogger().info("El tiempo ha llegado a 0 para " + uuid);
-                    banTask.banPlayer(uuid);
-                }
-
-                // Update cache
                 timersCache.put(uuid, newTime);
                 batchProcessor.addToBatch(uuid, newTime);
+
+                if (newTime <= 0) {
+                    Bukkit.getScheduler().runTask(plugin, () -> banTask.banPlayer(uuid));
+                }
             }
-        });
+        }
     }
 
     public void flushAllToDatabase() {
@@ -73,7 +82,6 @@ public class CacheManager {
             }
             timersCache.put(uuid, time);
         }
-        getLogger().info("Tiempo obtenido para " + uuid + ": " + time);
         return time;
     }
 
@@ -84,5 +92,20 @@ public class CacheManager {
 
     public void invalidatePlayer(UUID uuid) {
         timersCache.invalidate(uuid);
+    }
+
+    public boolean hasBypass(UUID uuid) {
+        if (bypassedPlayers.contains(uuid)) return true;
+        return db.isBypass(uuid);
+    }
+
+    public void addBypass(UUID uuid) {
+        bypassedPlayers.add(uuid);
+        db.setBypass(uuid, true);
+    }
+
+    public void removeBypass(UUID uuid) {
+        bypassedPlayers.remove(uuid);
+        db.setBypass(uuid, false);
     }
 }

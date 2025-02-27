@@ -27,7 +27,7 @@ public class BatchProcessor {
         try {
             batchQueue.put(uuid, time);
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Error en batch para " + uuid, e);
+            plugin.getLogger().log(Level.SEVERE, "[ERROR] Failed to add to batch for user: " + uuid, e);
         }
     }
 

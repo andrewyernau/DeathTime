@@ -2,9 +2,12 @@ package net.ezplace.deathTime.config;
 
 import net.ezplace.deathTime.DeathTime;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingsManager {
     private final static SettingsManager instance = new SettingsManager();
@@ -32,6 +35,8 @@ public class SettingsManager {
     public static String ITEM_LORE;
 
     public static int KILL_COOLDOWN;
+
+    public static Map<String, Integer> REWARDS = new HashMap<>();
 
     private SettingsManager(){
 
@@ -78,6 +83,13 @@ public class SettingsManager {
 
         KILL_COOLDOWN = config.getInt("Defaults.Kill-cooldown", 300);
 
+        REWARDS.clear();
+        ConfigurationSection rewardsSection = config.getConfigurationSection("Rewards.Entities");
+        if (rewardsSection != null) {
+            for (String entity : rewardsSection.getKeys(false)) {
+                REWARDS.put(entity, rewardsSection.getInt(entity));
+            }
+        }
     }
 
     public void save(){
