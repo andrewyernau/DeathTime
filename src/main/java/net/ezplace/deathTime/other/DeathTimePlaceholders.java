@@ -38,7 +38,7 @@ public class DeathTimePlaceholders extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("time_left")) {
-            if (player == null) return "0";
+            if (player == null) return null;
 
             long timeLeft = cacheManager.getPlayerTime(player.getUniqueId());
 

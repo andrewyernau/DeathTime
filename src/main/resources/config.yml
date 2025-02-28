@@ -4,6 +4,7 @@ Defaults:
   Initial-time: 86400
   Ban-duration: 86400
   Kill-cooldown: 300
+  Player-on-death-penalty: 300
   Item:
     Material: DRAGON_BREATH
     Name: "&5Breath of the time"

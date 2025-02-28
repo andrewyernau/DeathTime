@@ -61,7 +61,7 @@ public final class DeathTime extends JavaPlugin {
             getCommand("deathtime").setTabCompleter(commandExecutor);
 
             getServer().getPluginManager().registerEvents(new PlayerListener(cacheManager, batchProcessor, itemHandler), this);
-            getServer().getPluginManager().registerEvents(new EntityListener(itemHandler,playerManager),this);
+            getServer().getPluginManager().registerEvents(new EntityListener(itemHandler,playerManager,cacheManager),this);
 
             getLogger().info(MessagesManager.getInstance().getMessage("plugin.enabled"));
 

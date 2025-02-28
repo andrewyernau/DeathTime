@@ -35,6 +35,7 @@ public class SettingsManager {
     public static String ITEM_LORE;
 
     public static int KILL_COOLDOWN;
+    public static int PLAYER_ON_DEATH_PENALTY;
 
     public static Map<String, Integer> REWARDS = new HashMap<>();
 
@@ -82,6 +83,7 @@ public class SettingsManager {
         ITEM_LORE = String.valueOf(config.getString("Defaults.Item.Lore"));
 
         KILL_COOLDOWN = config.getInt("Defaults.Kill-cooldown", 300);
+        PLAYER_ON_DEATH_PENALTY = config.getInt("Defaults.Player-on-death-penalty", 300);
 
         REWARDS.clear();
         ConfigurationSection rewardsSection = config.getConfigurationSection("Rewards.Entities");
