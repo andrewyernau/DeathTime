@@ -2,6 +2,7 @@ package net.ezplace.deathTime.core;
 
 import net.ezplace.deathTime.config.MessagesManager;
 import net.ezplace.deathTime.config.SettingsManager;
+import net.ezplace.deathTime.other.ColorUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,7 +27,7 @@ public class ItemManager {
             return item;
         }
 
-        meta.setDisplayName(SettingsManager.ITEM_NAME);
+        meta.setDisplayName(ColorUtils.translateRGB(SettingsManager.ITEM_NAME));
         List<String> lore = MessagesManager.getInstance().getMessageList("item.lore", Map.of("time", String.valueOf(itemValue)));
         meta.setLore(lore);
 

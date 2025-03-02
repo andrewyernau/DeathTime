@@ -41,13 +41,6 @@ public class DeathTimePlaceholders extends PlaceholderExpansion {
             if (player == null) return null;
 
             long timeLeft = cacheManager.getPlayerTime(player.getUniqueId());
-
-            if (player.isOnline()) {
-                Player onlinePlayer = (Player) player;
-                if (onlinePlayer.hasPermission("deathtime.bypass")) {
-                    return "∞"; // infinite if bypass (frozen timer)
-                }
-            }
             //(MM:SS or HH:MM:SS)
             return formatTime(timeLeft);
         }

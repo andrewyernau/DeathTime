@@ -1,6 +1,7 @@
 package net.ezplace.deathTime.config;
 
 import net.ezplace.deathTime.DeathTime;
+import net.ezplace.deathTime.other.ColorUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.*;
@@ -44,21 +45,13 @@ public class MessagesManager {
             }
         }
 
-        return message.replace("&", "§");
+        return ColorUtils.translateRGB(message);
     }
 
     public List<String> getMessageList(String key, Map<String, String> placeholders) {
         List<String> formattedList = new ArrayList<>();
-
-        // Verificar si la clave existe en el YAML
-        if (!messages.contains(key)) {
-            return formattedList;  // Lista vacía si no existe
-        }
-
-        // Obtener la lista del YAML
         List<String> rawList = messages.getStringList(key);
 
-        // Aplicar placeholders y formato a cada línea
         for (String line : rawList) {
             String formattedLine = line;
 
@@ -67,12 +60,12 @@ public class MessagesManager {
                     formattedLine = formattedLine.replace("{" + entry.getKey() + "}", entry.getValue());
                 }
             }
-
-            formattedList.add(formattedLine.replace("&", "§"));
+            formattedList.add(ColorUtils.translateRGB(formattedLine));
         }
-
         return formattedList;
     }
+
+
 
 
     public String getMessage(String key) {

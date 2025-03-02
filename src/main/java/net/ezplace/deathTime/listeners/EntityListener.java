@@ -42,7 +42,8 @@ public class EntityListener implements Listener {
                 }
             }
 
-            cacheManager.updatePlayerTime(victim.getUniqueId(), SettingsManager.PLAYER_ON_DEATH_PENALTY);
+            long playerTime= cacheManager.getPlayerTime(victim.getUniqueId());
+            cacheManager.updatePlayerTime(victim.getUniqueId(), playerTime-SettingsManager.PLAYER_ON_DEATH_PENALTY);
         } //Entity drops
         else {
             Entity entity = event.getEntity();
