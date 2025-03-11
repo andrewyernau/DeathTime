@@ -37,8 +37,8 @@ public class CacheManager {
         this.batchProcessor = new BatchProcessor(db, plugin);
 
         this.timersCache = Caffeine.newBuilder()
-                .maximumSize(1000)
-                .expireAfterAccess(30, TimeUnit.MINUTES)
+                .maximumSize(SettingsManager.CACHE_SIZE)
+                .expireAfterAccess(SettingsManager.CACHE_EXPIRATION, TimeUnit.MINUTES)
                 .build(this::loadFromDatabase);
     }
 
@@ -76,7 +76,7 @@ public class CacheManager {
         Long time = timersCache.getIfPresent(uuid);
         if (time == null) {
             time = db.getPlayerTime(uuid); // Ddbb load
-            if (time == -1) {
+            if (time < 0) {
                 time = (long) SettingsManager.INITIAL_TIME;
                 db.updatePlayerTime(uuid, time);
             }
@@ -85,7 +85,36 @@ public class CacheManager {
         return time;
     }
 
+    /**
+     * Integrity check because the cache might be inconsistent and end up with negative times.
+     * */
+    public void validateTimers() {
+        for (UUID uuid : timersCache.asMap().keySet()) {
+            long currentTime = timersCache.get(uuid);
+
+            if (currentTime < 0) {
+                getLogger().warning("Tiempo negativo detectado para " + uuid + ". Corrigiendo a 0.");
+                timersCache.put(uuid, 0L);
+                Bukkit.getScheduler().runTask(plugin, () -> banTask.banPlayer(uuid));
+            }
+
+            boolean isBanned = db.isPlayerBanned(uuid);
+            if (isBanned && currentTime > 0) {
+                getLogger().warning("Inconsistencia: Jugador " + uuid + " está baneado pero tiene tiempo positivo. Restableciendo.");
+                db.updateBanStatus(uuid, 0);
+                timersCache.put(uuid, 0L);
+            } else if (!isBanned && currentTime <= 0) {
+                getLogger().warning("Inconsistencia: Jugador " + uuid + " no está baneado pero tiene tiempo 0. Baneando.");
+                Bukkit.getScheduler().runTask(plugin, () -> banTask.banPlayer(uuid));
+            }
+        }
+    }
+
     public void updatePlayerTime(UUID uuid, long time) {
+        if (time < 0) {
+            time = 0;
+            Bukkit.getScheduler().runTask(plugin, () -> banTask.banPlayer(uuid));
+        }
         timersCache.put(uuid, time);
         batchProcessor.addToBatch(uuid, time);
     }

@@ -114,6 +114,19 @@ public class DatabaseManager {
         return bans;
     }
 
+    public boolean isPlayerBanned(UUID uuid) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT banned_until FROM players WHERE uuid = ?")) {
+            stmt.setString(1, uuid.toString());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getLong("banned_until") > System.currentTimeMillis();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public void setBypass(UUID uuid, boolean bypass) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(

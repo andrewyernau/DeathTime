@@ -6,7 +6,10 @@ import net.ezplace.deathTime.core.ItemManager;
 import net.ezplace.deathTime.config.MessagesManager;
 import net.ezplace.deathTime.config.SettingsManager;
 import net.ezplace.deathTime.data.CacheManager;
+import net.ezplace.deathTime.data.DatabaseManager;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.type.Bell;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,29 +21,47 @@ import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DeathTimeCommands implements CommandExecutor, TabCompleter {
 
     private final ItemManager itemHandler;
     private final CacheManager cacheManager;
+    private final DatabaseManager databaseManager;
 
     public DeathTimeCommands(ItemManager itemHandler, CacheManager cacheManager) {
         this.itemHandler = itemHandler;
         this.cacheManager = cacheManager;
+        this.databaseManager = DeathTime.getInstance().getDatabaseManager();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+        if (args.length > 0 && args[0].equalsIgnoreCase("time")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(MessagesManager.getInstance().getMessage("command.console.error"));
+                return true;
+            }
+
+            Player player = (Player) sender;
+            long timeLeft = cacheManager.getPlayerTime(player.getUniqueId());
+
+            String formattedTime = formatTime(timeLeft);
+            player.sendMessage(MessagesManager.getInstance().getMessage("command.time",
+                    Map.of("time", formattedTime)));
+
+            return true;
+        }
+
+
         if (!sender.hasPermission("deathtime.command.admin")) {
             sender.sendMessage("§f-----------§6Death§0Time§f-----------");
             sender.sendMessage("§8Made by §4AndrewYerNau");
             sender.sendMessage("§8Version 1.0");
             return true;
         }
+
 
         if (args.length == 0) {
             return false;
@@ -124,6 +145,22 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 return true;
+            case "pardon":
+                if (args.length == 2) {
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.playernotonline",Map.of("user", args[1])));
+                        return true;
+                    }
+                    UUID uuid = target.getUniqueId();
+                    databaseManager.updateBanStatus(uuid, 0);
+                    cacheManager.updatePlayerTime(uuid, SettingsManager.INITIAL_TIME);
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+                    Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
+                    sender.sendMessage(MessagesManager.getInstance().getMessage("command.pardon",Map.of("user",args[1])));
+                    return true;
+                }
+                return true;
 
             case "bypass":
                 if (args.length == 2) {
@@ -173,6 +210,15 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
         }
     }
 
+    private String formatTime(long seconds) {
+        long days = seconds / 86400;
+        long hours = (seconds % 86400) / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+
+        return String.format("%d días, %02d:%02d:%02d", days, hours, minutes, secs);
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
@@ -182,9 +228,9 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1) {
-            completions.addAll(Arrays.asList("help", "reload", "item", "set", "check","bypass","unbypass"));
+            completions.addAll(Arrays.asList("help", "reload", "item", "set", "check","pardon","bypass","unbypass","time"));
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("check")|| args[0].equalsIgnoreCase("bypass")|| args[0].equalsIgnoreCase("unbypass")) {
+            if (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("check")|| args[0].equalsIgnoreCase("bypass")|| args[0].equalsIgnoreCase("unbypass")|| args[0].equalsIgnoreCase("pardon")) {
                 completions.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             } else if (args[0].equalsIgnoreCase("item")) {
                 completions.addAll(Arrays.asList("get", "player"));
@@ -203,6 +249,8 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
         player.sendMessage(MessagesManager.getInstance().getMessage("command.help.itemplayer"));
         player.sendMessage(MessagesManager.getInstance().getMessage("command.help.set"));
         player.sendMessage(MessagesManager.getInstance().getMessage("command.help.check"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.pardon"));
+        player.sendMessage(MessagesManager.getInstance().getMessage("command.help.time"));
         player.sendMessage(MessagesManager.getInstance().getMessage("command.help.bypass"));
         player.sendMessage(MessagesManager.getInstance().getMessage("command.help.unbypass"));
     }

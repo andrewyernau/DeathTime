@@ -70,6 +70,7 @@ public final class DeathTime extends JavaPlugin {
             getLogger().severe(MessagesManager.getInstance().getMessage("plugin.disable") + e.getMessage());
             e.printStackTrace();
 
+            this.setEnabled(false);
             getServer().getPluginManager().disablePlugin(this);
         }
 
@@ -80,23 +81,34 @@ public final class DeathTime extends JavaPlugin {
     }
 
     private void startScheduledTasks() {
+        final int[] validationCounter = {0};
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             // Timers
             cacheManager.decrementAllTimers();
 
+            validationCounter[0]++;
+            if (validationCounter[0] >= 300) {
+                cacheManager.validateTimers();
+                validationCounter[0] = 0;
+            }
             // Async batch processor
             getServer().getScheduler().runTaskAsynchronously(this, batchProcessor::flushBatch);
-        }, 0L, 20L);
+        }, 0L, 20L); // 1 second
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             banTask.checkExpiredBans();
-        }, 0L, 1200L);
+        }, 0L, 1200L); // 1 minute
     }
 
     @Override
     public void onDisable() {
-        batchProcessor.shutdown();
-        cacheManager.flushAllToDatabase();
+
+        if (batchProcessor != null) {
+            batchProcessor.getInstance().shutdown();
+        }
+        if (cacheManager != null) {
+            cacheManager.flushAllToDatabase();
+        }
     }
 
     public static DeathTime getInstance() {
@@ -104,5 +116,8 @@ public final class DeathTime extends JavaPlugin {
     }
     public CacheManager getCacheManager(){
         return cacheManager;
+    }
+    public DatabaseManager getDatabaseManager(){
+        return databaseManager;
     }
 }

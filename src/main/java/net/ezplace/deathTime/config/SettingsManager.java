@@ -26,7 +26,8 @@ public class SettingsManager {
 
     public static int DATABASE_POOLSIZE;
     public static int DATABASE_CONNTIMEOUT;
-
+    public static int CACHE_EXPIRATION;
+    public static int CACHE_SIZE;
     public static Long INITIAL_TIME;
     public static Long BAN_DURATION;
 
@@ -72,9 +73,10 @@ public class SettingsManager {
         DATABASE_USERNAME = config.getString("Database.username", "root");
         DATABASE_PASSWORD = config.getString("Database.password", "password");
 
-        DATABASE_POOLSIZE = config.getInt("Database.port", 3306);
-        DATABASE_CONNTIMEOUT = config.getInt("Database.port", 3306);
-
+        DATABASE_POOLSIZE = config.getInt("Config.port", 3306);
+        DATABASE_CONNTIMEOUT = config.getInt("Config.port", 3306);
+        CACHE_EXPIRATION = config.getInt("Config.cacheExpiration", 30);
+        CACHE_SIZE = config.getInt("Config.cacheSize", 1000);
 
         INITIAL_TIME = config.getLong("Defaults.Initial-time", 11340);
         BAN_DURATION = config.getLong("Defaults.Ban-duration",11340);

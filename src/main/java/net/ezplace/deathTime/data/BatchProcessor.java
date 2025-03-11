@@ -23,6 +23,10 @@ public class BatchProcessor {
         scheduler.scheduleAtFixedRate(this::flushBatch, 5, 5, TimeUnit.SECONDS);
     }
 
+    public BatchProcessor getInstance(){
+        return this;
+    }
+
     public void addToBatch(UUID uuid, Long time) {
         try {
             batchQueue.put(uuid, time);

@@ -1,17 +1,17 @@
 #
 Lang: en
 Defaults:
-  Initial-time: 86400
+  Initial-time: 86400 # In seconds
   Ban-duration: 86400
-  Kill-cooldown: 300
-  Player-on-death-penalty: 300
+  Kill-cooldown: 300 # Kill cooldown is a preventive measure to avoid players farming kills to get more time play.
+  Player-on-death-penalty: 300 # When a player dies, he loses this amount of time
   Item:
     Material: DRAGON_BREATH
     Name: "&5Breath of the time"
     Lore:
       - "&7Adds {seconds} seconds of life"
-    Glow-effect: true
 
+# Rewards the Item (with the time in seconds written) for killing entities
 Rewards:
   Entities:
     PLAYER: 300
@@ -19,6 +19,7 @@ Rewards:
     WARDEN: 1200
     ZOMBIE: 60 #Add as many entities as you want
 
+#DeathTime, requires a database to store the time of the players, by default it uses H2, a local .db file, but if you want to link it (for example you are running a network) you can use MySQL, SQLite or PostgreSQL
 Database:
   type: "h2" # Options: h2 (local), mysql, sqlite, postgresql
   host: "localhost"
@@ -26,9 +27,10 @@ Database:
   database_name: "deathtimer"
   username: "root"
   password: "password"
+
+# If you don't know what this is, leave it as it is
+Config:
   poolsize: 10
   connectionTimeOut: 3000
-Messages:
-  Time-left: "&eTime left: &6{timeleft}"
-  Time-alive: "&eTime alive: &6{timelive}"
-  Banned: "&cYou died! Reviving in &4{time} &cseconds"
+  cacheExpiration: 30 # In minutes
+  cacheSize: 1000

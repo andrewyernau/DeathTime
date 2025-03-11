@@ -8,7 +8,7 @@ shadowJar {
 }
 
 group = 'net.ezplace'
-version = '1.0-SNAPSHOT'
+version = 'Beta-0.1.1'
 
 repositories {
     mavenCentral()

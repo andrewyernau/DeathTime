@@ -18,6 +18,8 @@ command:
     itemplayer: "§e/dt item player <jugador> <tiempo> §7- Dar el item a un jugador <jugador> de tiempo <tiempo> segundos."
     set: "§e/dt set <jugador> <tiempo> §7-Poner el tiempo <tiempo> de contador al jugador <jugador>"
     check: "§e/dt check <jugador> §7- Comprobar el tiempo restante al jugador <jugador>"
+    time: "§e/dt time §7- Comprobar el tiempo restante"
+    pardon: "§e/dt pardon <jugador> §7- Perdonar al jugador <jugador>"
     bypass: "§e/dt bypass <jugador> §7- Parar el contador al jugador <jugador>"
     unbypass: "§e/dt unbypass <jugador> reload §7- Reanudar el contador al jugador <jugador>"
   item:
@@ -37,6 +39,8 @@ command:
     success: "§aSe le ha reanudado correctamente el temporizador a {user}"
     received: "§aTic tac, el tiempo vuelve a correr"
   notfound: "§cComando no reconocido, por favor usa /dt help para más información"
+  pardon: "§aSe ha perdonado correctamente a {user}"
+  time: "&eTiempo restante: &6{time}"
 ban:
   message: "§cHas muerto. Revivirás en 1 semana!"
   outoftime: "§cTe has quedado sin tiempo"
