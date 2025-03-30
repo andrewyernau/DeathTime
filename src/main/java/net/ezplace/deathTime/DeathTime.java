@@ -81,16 +81,16 @@ public final class DeathTime extends JavaPlugin {
     }
 
     private void startScheduledTasks() {
-        final int[] validationCounter = {0};
+//        final int[] validationCounter = {0};
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             // Timers
             cacheManager.decrementAllTimers();
 
-            validationCounter[0]++;
-            if (validationCounter[0] >= 300) {
-                cacheManager.validateTimers();
-                validationCounter[0] = 0;
-            }
+//            validationCounter[0]++;
+//            if (validationCounter[0] >= 300) {
+//                cacheManager.validateTimers();
+//                validationCounter[0] = 0;
+//            } TODO: FIX UNWANTED BANS!
             // Async batch processor
             getServer().getScheduler().runTaskAsynchronously(this, batchProcessor::flushBatch);
         }, 0L, 20L); // 1 second
