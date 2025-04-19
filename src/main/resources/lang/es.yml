@@ -10,13 +10,14 @@ command:
   console:
     error: "§c¡No se puede realizar este comando desde la consola!"
   playernotonline: "§cEl jugador {user} no está conectado"
+  playernotfound : "§cNo se ha podido encontrar al jugador {user}."
   help:
     title: "§a----- Comandos DeathTime -----"
     help: "§e/dt help §7- Mostrar este menu."
     reload: "§e/dt reload §7- Recargar el plugin."
     itemget: "§e/dt item get <tiempo> §7- Obtener el item de tiempo <tiempo> segundos."
     itemplayer: "§e/dt item player <jugador> <tiempo> §7- Dar el item a un jugador <jugador> de tiempo <tiempo> segundos."
-    set: "§e/dt set <jugador> <tiempo> §7-Poner el tiempo <tiempo> de contador al jugador <jugador>"
+    set: "§e/dt set/add <jugador> <tiempo> §7-Poner el tiempo <tiempo> de contador al jugador <jugador>"
     check: "§e/dt check <jugador> §7- Comprobar el tiempo restante al jugador <jugador>"
     time: "§e/dt time §7- Comprobar el tiempo restante"
     pardon: "§e/dt pardon <jugador> §7- Perdonar al jugador <jugador>"

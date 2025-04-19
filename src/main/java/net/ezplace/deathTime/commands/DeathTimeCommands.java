@@ -132,6 +132,24 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 return true;
+            case "add":
+                if (args.length == 3) {
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.playernotonline",Map.of("user",args[1])));
+                        return true;
+                    }
+                    try {
+                        int value = Integer.parseInt(args[2]);
+
+                        cacheManager.updatePlayerTime(target.getUniqueId(), value + cacheManager.getPlayerTime(target.getUniqueId()));
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.set.success",Map.of("user",args[1])));
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.item.notint"));
+                    }
+                    return true;
+                }
+                return true;
 
             case "check":
                 if (args.length == 2) {
@@ -147,17 +165,26 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
                 return true;
             case "pardon":
                 if (args.length == 2) {
-                    Player target = Bukkit.getPlayer(args[1]);
-                    if (target == null) {
-                        sender.sendMessage(MessagesManager.getInstance().getMessage("command.playernotonline",Map.of("user", args[1])));
-                        return true;
+                    String targetName = args[1];
+                    UUID uuid;
+                    Player onlinePlayer = Bukkit.getPlayer(targetName);
+                    if (onlinePlayer != null) {
+                        uuid = onlinePlayer.getUniqueId();
+                    } else {
+                        uuid = databaseManager.getCachedUUID(targetName);
+                        if (uuid == null) {
+                            uuid = databaseManager.getUUIDFromMojang(targetName);
+                            if (uuid == null) {
+                                sender.sendMessage(MessagesManager.getInstance().getMessage("command.playernotfound", Map.of("user", targetName)));
+                                return true;
+                            }
+                        }
                     }
-                    UUID uuid = target.getUniqueId();
                     databaseManager.updateBanStatus(uuid, 0);
                     cacheManager.updatePlayerTime(uuid, SettingsManager.INITIAL_TIME);
-                    OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-                    Bukkit.getBanList(BanList.Type.NAME).pardon(player.getName());
-                    sender.sendMessage(MessagesManager.getInstance().getMessage("command.pardon",Map.of("user",args[1])));
+                    Bukkit.getBanList(BanList.Type.NAME).pardon(uuid.toString());
+
+                    sender.sendMessage(MessagesManager.getInstance().getMessage("command.pardon", Map.of("user", targetName)));
                     return true;
                 }
                 return true;
@@ -228,9 +255,9 @@ public class DeathTimeCommands implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 1) {
-            completions.addAll(Arrays.asList("help", "reload", "item", "set", "check","pardon","bypass","unbypass","time"));
+            completions.addAll(Arrays.asList("help", "reload", "item", "set","add", "check","pardon","bypass","unbypass","time"));
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("check")|| args[0].equalsIgnoreCase("bypass")|| args[0].equalsIgnoreCase("unbypass")|| args[0].equalsIgnoreCase("pardon")) {
+            if (args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("add") ||args[0].equalsIgnoreCase("check")|| args[0].equalsIgnoreCase("bypass")|| args[0].equalsIgnoreCase("unbypass")|| args[0].equalsIgnoreCase("pardon")) {
                 completions.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
             } else if (args[0].equalsIgnoreCase("item")) {
                 completions.addAll(Arrays.asList("get", "player"));

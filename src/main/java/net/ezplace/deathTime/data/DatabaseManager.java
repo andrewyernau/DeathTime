@@ -3,8 +3,14 @@ package net.ezplace.deathTime.data;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.ezplace.deathTime.config.SettingsManager;
+import org.bukkit.Bukkit;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,6 +58,7 @@ public class DatabaseManager {
              PreparedStatement stmt = conn.prepareStatement(
                      "CREATE TABLE IF NOT EXISTS players (" +
                              "uuid VARCHAR(36) PRIMARY KEY, " +
+                             "username VARCHAR(16) NOT NULL, " +
                              "timer BIGINT NOT NULL, " +
                              "banned_until BIGINT DEFAULT 0, " +
                              "bypass BOOLEAN DEFAULT FALSE)" )) {
@@ -75,11 +82,16 @@ public class DatabaseManager {
     }
 
     public void updatePlayerTime(UUID uuid, long time) {
+        String username = Bukkit.getPlayer(uuid) != null
+                ? Bukkit.getPlayer(uuid).getName()
+                : Bukkit.getOfflinePlayer(uuid).getName();
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "MERGE INTO players(uuid, timer) KEY(uuid) VALUES(?, ?)")) {
+                     "MERGE INTO players(uuid, username, timer) KEY(uuid) VALUES(?, ?, ?)")) {
             stmt.setString(1, uuid.toString());
-            stmt.setLong(2, time);
+            stmt.setString(2, username);
+            stmt.setLong(3, time);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,6 +162,48 @@ public class DatabaseManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public UUID getCachedUUID(String name) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT uuid FROM players WHERE username = ?")) {
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? UUID.fromString(rs.getString("uuid")) : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //Remove in the future hopefully. Should be useless hence I don't want to "unban" a player that has never logged in. (Maybe name change or something...)
+    public UUID getUUIDFromMojang(String name) {
+        try {
+            URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            if (conn.getResponseCode() == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                JSONObject json = new JSONObject(response.toString());
+                String uuidStr = json.getString("id");
+                return UUID.fromString(
+                        uuidStr.replaceFirst(
+                                "(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})",
+                                "$1-$2-$3-$4-$5"
+                        )
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

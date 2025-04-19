@@ -47,14 +47,13 @@ public class CacheManager {
     }
 
     public void decrementAllTimers() {
-
-        for (Map.Entry<UUID, Long> entry : timersCache.asMap().entrySet()) {
-            UUID uuid = entry.getKey();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UUID uuid = player.getUniqueId();
             if (hasBypass(uuid)) {
                 continue;
             }
 
-            long time = entry.getValue();
+            long time = getPlayerTime(uuid);
 
             if (time > 0) {
                 long newTime = time - 1;

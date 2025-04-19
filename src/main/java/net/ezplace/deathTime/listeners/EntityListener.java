@@ -27,12 +27,16 @@ public class EntityListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         //Player drops
-        if (event.getEntity() instanceof Player) {
-            Player victim = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player victim) {
+
             String entityType = victim.getType().toString();
             int timeToAdd = SettingsManager.REWARDS.getOrDefault(entityType, 0);
             if (timeToAdd <= 0) return;
             Player killer = victim.getKiller();
+
+            if (killer == null && !SettingsManager.PLAYER_NATURAL_DEATH_DROP) {
+                return;
+            }
             //Prevent abuse
             if (killer != null && killer != victim) {
                 if (playerManager.canDropItem(killer.getUniqueId(), victim.getUniqueId())) {
